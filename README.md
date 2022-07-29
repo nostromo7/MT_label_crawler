@@ -64,7 +64,6 @@ the low-level record labels and copyright information. The _run_preprocessing.py
 2. _label_crawler_: Contains the different crawling steps, all orchestrated by _run_crawler.py_
 3. _analysis_: Scripts to run analysis on base/preprocessed and enriched datasets (for LFM-2b and MPD)
 4. _recSys18_experiments_: Experiments on applying re-ranking in a post-filter step to the KAENEN submission of the recSys18 (https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge)
-5. 
 
 ### Preprocessing (using Spotify):
 
