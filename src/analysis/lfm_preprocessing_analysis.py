@@ -66,10 +66,11 @@ def run_analysis_output():
     print("number of unique artists", len(artists))
     print("number of unique low-level_labels", len(labels_low))
 
-    analyze_histogram(track_histogram, plot_title='Distribution of sorted track occurrences in lfm-2b', plot_focus='tracks')
-    analyze_histogram(album_histogram, plot_title='Distribution of sorted album occurrences in lfm-2b', plot_focus='albums')
-    analyze_histogram(artist_histogram, plot_title='Distribution of sorted artist occurrences in lfm-2b', plot_focus='artists')
-    analyze_histogram(label_low_histogram, plot_title='Distribution of sorted low-level label occurrences in lfm-2b', plot_focus='low-level labels')
+    print(track_histogram.most_common(50))
+    analyze_histogram(track_histogram, plot_title='Distribution of sorted track occurrences in LFM-2b', plot_focus='tracks')
+    analyze_histogram(album_histogram, plot_title='Distribution of sorted album occurrences in LFM-2b', plot_focus='albums')
+    analyze_histogram(artist_histogram, plot_title='Distribution of sorted artist occurrences in LFM-2b', plot_focus='artists')
+    analyze_histogram(label_low_histogram, plot_title='Distribution of sorted low-level label occurrences in LFM-2b', plot_focus='low-level labels')
 
 
 if __name__ == "__main__":

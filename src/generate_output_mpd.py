@@ -63,6 +63,8 @@ def write_label_info_back():
 
 
 def main():
+    if not os.path.exists(PATH_TO_SLICES_ENRICHED):
+        os.mkdir(PATH_TO_SLICES_ENRICHED)
     write_label_info_back()
 
 

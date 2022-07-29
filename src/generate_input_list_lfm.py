@@ -1,4 +1,5 @@
 import sys
+import os
 import pandas as pd
 import numpy as np
 
@@ -10,14 +11,13 @@ OCC = constants.OCC
 
 INPUT_PATH = constants.PATH_TO_LFM_ORIGINAL
 OUTPUT_PATH = constants.INPUT_TRACK_URIS
+CRAWLER_OUTPUT_FOLDER = constants.CRAWLER_OUTPUT_FOLDER
 
 
 def create_track_uri_list(output_path=OUTPUT_PATH):
 
     print('Create new list of track_uris from: ', INPUT_PATH)
     track_uri_df = pd.read_csv(INPUT_PATH, sep='\t').drop(['track_id'], axis=1)
-    # TODO: REMOVE length restriction
-    # track_uri_df = track_uri_df[:50]
     track_uri_df[OCC] = 1
     track_uri_df[TRACK_URI] = 'spotify:track:' + track_uri_df['uri'].astype(str)
     track_uri_df = track_uri_df.drop(['uri'], axis=1)
@@ -31,6 +31,8 @@ def create_track_uri_list(output_path=OUTPUT_PATH):
 
 
 def main():
+    if not os.path.exists(CRAWLER_OUTPUT_FOLDER):
+        os.mkdir(CRAWLER_OUTPUT_FOLDER)
     create_track_uri_list()
 
 

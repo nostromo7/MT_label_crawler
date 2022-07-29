@@ -1,12 +1,11 @@
 import sys
-import os
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from wordcloud import WordCloud, STOPWORDS
 
 from src import constants
+from src.utils import plot_utils
 
 DEBUG = constants.DEBUG
 
@@ -98,12 +97,6 @@ def base_analysis():
     print('----------------------------------------')
     print('Plotting graphs')
 
-
-    #n, bins, patches = plt.hist(label_grouped_df['label_occurrences'], bins=50)
-    #plt.yscale('log')
-    #plt.xlabel('Record Labels')
-    #plt.ylabel('Occurrences')
-
     threshold = 0.9
     curr_sum = 0
     total_sum = label_grouped_track_df['track_occurrences'].sum()
@@ -124,58 +117,36 @@ def base_analysis():
     plt.legend()
     plt.plot(label_grouped_track_df['track_occurrences'])
 
-    # TODO: Add plot of low-level label distribution on label leven (instead of track level)?
-    # label_grouped_track_df.reset_index(inplace=True, drop=True)
-    # ax1.set_title('Distribution of low level record labels')
-    # ax1.set_yscale('log')
-    # ax1.set_xlabel('Low level record labels')
-    # ax1.set_ylabel('Occurrences')
-    # plt.axvline(x=index, color='red', linewidth=0.5, label=f'Sum of occurrences above {threshold:.0%} at {index / len(label_grouped_track_df):.2%}')
-    # plt.legend()
-    # plt.plot(label_grouped_df['label_occurrences'])
-
-    threshold = 1000
-    # TODO: fix treemap
-    tmp_df = label_grouped_track_df.loc[label_grouped_track_df['track_occurrences'] >= threshold]
-    # fig = px.treemap(tmp_df, path=[px.Constant(f"MPD low-level record labels with occ > {threshold}"), RECORD_LABEL_LOW], values='track_occurrences',
-    #                  color='track_occurrences',
-    #                  color_continuous_scale='RdBu',
-    #                  color_continuous_midpoint=np.average(tmp_df['track_occurrences'], weights=tmp_df['track_occurrences']))
-    # fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
-    # fig.show()
-
     fig3, ax3 = plt.subplots(figsize=(20, 10))
     label_names = " ".join(str(label_name) for label_name in low_level_label_df_clean[RECORD_LABEL_LOW])
     stopwords = set(STOPWORDS)
     stopwords.update(
         ['Music', 'Record', 'Entertainment', 'Records', 'Recording', 'Production', 'Media', 'LLC.', 'Music Group',
          'Sound', 'Inc', 'LLC', 'Co', 'Recordings', 'Ent', 'Group', 'Productions', 'Ltd', 'Company', 'Publishing',
-         'Label'])
+         'Label', 'International', 'Big', 'Artist', 'New', 'Distribution', 'Digital'])
     max_words = 100
     wordcloud = WordCloud(
         width=800,
         height=400,
         stopwords=stopwords,
         max_words=max_words,
-        background_color='white'
+        background_color='white',
+        collocations=False,
+        min_word_length=2
     ).generate(label_names)
     plt.imshow(wordcloud, interpolation='bilinear')
     # ax3.set_title(f'Word cloud of top {max_words} low level record labels:')
     ax3.axis('off')
 
-    #fig4, ax4 = plt.subplots()
-    #labels = ['Universal', 'Sony', 'Warner', 'Independent', 'Unknown', 'Missing']
-    #shares = [n_univ, n_sony, n_warn, n_indi, n_unkn, missing_target]
-    #ax4.set_title('Assigned labels total: ')
-    #ax4.pie(shares, labels=labels, autopct='%1.1f%%', startangle=90)
+    plot_utils.pie_plot({
+        'Universal': coverage_univ,
+        'Sony': coverage_sony,
+        'Warner': coverage_warn,
+        'Independent': coverage_indi,
+        'Unknown': coverage_unkn,
+        'Missing': missing_coverage
+    }, title='Assigned labels relative to label occ: ', colors=['lightblue', 'tomato', 'lightgreen', 'lavender', 'beige', 'grey'])
 
-    fig5, ax5 = plt.subplots()
-    labels = ['Universal', 'Sony', 'Warner', 'Independent', 'Unknown', 'Missing']
-    shares = [coverage_univ, coverage_sony, coverage_warn, coverage_indi, coverage_unkn, missing_coverage]
-    ax5.set_title('Assigned labels relative to label occ: ')
-    ax5.pie(shares, labels=labels, autopct='%1.1f%%', startangle=90)
-
-    #sns.displot(data=label_grouped_df['label_occurrences'], log_scale=True, kind='hist')
     plt.show()
 
 

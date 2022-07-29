@@ -22,7 +22,7 @@ SKIP_PREPROCESSING = False
 DEBUG = False
 
 
-def main(path_to_label_map=None, start_from_track_uris=None, run_analysis=None, skip_preprocessing=None, debug=None):
+def main(path_to_label_map=None, start_from_track_uris=None, run_analysis=None, debug=None):
     global START_FROM_TRACK_URIS, PATH_TO_LABEL_MAP, RUN_ANALYSIS, DEBUG
 
     if start_from_track_uris is not None:
@@ -36,17 +36,17 @@ def main(path_to_label_map=None, start_from_track_uris=None, run_analysis=None, 
 
     if START_FROM_TRACK_URIS:
         print('Run spotify crawler for track_uri to album_uri ')
-        spotify_album_crawler.main(debug=debug)
+        spotify_album_crawler.main(debug=DEBUG)
 
     print('Run spotify crawler for album_uri to label- and copyright info')
-    spotify_record_label_crawler.main(debug=debug)
+    spotify_record_label_crawler.main(debug=DEBUG)
 
     if PATH_TO_LABEL_MAP is not None:
         print('Create low-level record label list and fill with classification from', PATH_TO_LABEL_MAP)
         spotify_crawler_postprocessing.main(existing_label_map=PATH_TO_LABEL_MAP)
     else:
         print('Create low-level record label list')
-        spotify_crawler_postprocessing.main(debug=debug)
+        spotify_crawler_postprocessing.main(debug=DEBUG)
 
     if RUN_ANALYSIS:
         spotify_crawler_analysis.main()
@@ -54,8 +54,8 @@ def main(path_to_label_map=None, start_from_track_uris=None, run_analysis=None, 
 
 if __name__ == "__main__":
     argument_list = sys.argv[1:]
-    options = 'dtla'
-    long_options = ['debug', 'track_base', 'label_map=', 'run_analysis']
+    options = 'dtra'
+    long_options = ['debug', 'track_start', 'reuse_label_map=', 'run_analysis']
 
     try:
         arguments, values = getopt.getopt(argument_list, options, long_options)
@@ -64,10 +64,10 @@ if __name__ == "__main__":
             if curr_arg in ('-d', '--debug'):
                 DEBUG = True
 
-            if curr_arg in ('-t', '--track_base'):
+            if curr_arg in ('-t', '--track_start'):
                 START_FROM_TRACK_URIS = True
 
-            if curr_arg in ('-l', '--label_map'):
+            if curr_arg in ('-r', '--reuse_label_map'):
                 print('Using existing label map at:', curr_value)
                 PATH_TO_LABEL_MAP = curr_value
 

@@ -20,6 +20,7 @@ Extracts relevant information from original data slices:
 DEBUG = constants.DEBUG
 
 PATH_TO_SLICES_ORIGINAL = constants.PATH_TO_SLICES_ORIGINAL
+CRAWLER_OUTPUT_FOLDER = constants.CRAWLER_OUTPUT_FOLDER
 
 SORTED_ALBUM_URIS = constants.SORTED_ALBUM_URIS
 
@@ -51,14 +52,7 @@ def generate_sorted_albums_df(playlist_max=None, cols_to_select=['album_uri', 'a
                 'artist_name': lambda d: ', '.join(set(d)),
                 'occurrences': 'size'
             }).reset_index()
-
-            # TODO: REMOVE length restriction
-            # file_df = file_df[:50]
-
             df_list.append(file_df)
-
-            # TODO: REMOVE length restriction
-            # break
 
         if count == playlist_max:
             print('reached max number of playlists: ', playlist_max)
@@ -79,6 +73,8 @@ def generate_sorted_albums_df(playlist_max=None, cols_to_select=['album_uri', 'a
 
 
 def main():
+    if not os.path.exists(CRAWLER_OUTPUT_FOLDER):
+        os.mkdir(CRAWLER_OUTPUT_FOLDER)
     generate_sorted_albums_df()
 
     return 0

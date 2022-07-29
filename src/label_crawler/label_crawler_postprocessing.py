@@ -1,7 +1,4 @@
-import sys
 import pandas as pd
-import numpy as np
-
 from src import constants
 
 LABEL_TO_MAJOR = constants.LABEL_MAP_FINAL
@@ -28,11 +25,17 @@ def create_output_lists(track_start=False):
         df_album_to_label = df_album_to_label.drop([RECORD_LABEL_MAJOR], axis=1)
 
     df_album_to_label = df_album_to_label.merge(df_label_to_major.drop_duplicates(subset=[RECORD_LABEL_LOW]), on=[RECORD_LABEL_LOW], how='left')
+
+    falsey_values = ['N/A', 'n/a', 'NA', 'null']
+    df_album_to_label.loc[
+        (df_album_to_label[RECORD_LABEL_LOW].isna() | df_album_to_label[RECORD_LABEL_LOW].isin(falsey_values)),
+            [RECORD_LABEL_LOW, RECORD_LABEL_MAJOR]] = [FINAL_INDI, FINAL_INDI]
+
     df_album_to_label.to_csv(ALBUM_URIS_ENRICHED, index=False)
 
     if track_start:
         df_track_to_album = pd.read_csv(TRACK_TO_ALBUM)
-        df_track_to_album = df_track_to_album.merge(df_album_to_label.drop([OCC], axis=1), on=[ALBUM_URI], how='left')
+        df_track_to_album = df_track_to_album.merge(df_album_to_label.drop([OCC], axis=1), on=[ALBUM_URI], how='inner')
         df_track_to_album.to_csv(TRACK_URIS_ENRICHED, index=False)
 
 

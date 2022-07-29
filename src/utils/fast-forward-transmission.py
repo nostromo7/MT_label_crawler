@@ -3,6 +3,11 @@ from tqdm import tqdm
 
 from src import constants
 
+###################
+# This script is a handy tool to decouple the dependence of the single classification steps (e.g. running the discogs
+# crawler before the wikipedia crawler) by fast forwarding all made classifications to the successive steps.
+###################
+
 LABEL_MAP_TRIVIAL = constants.LABEL_MAP_TRIVIAL
 LABEL_MAP_DISCOGS = constants.LABEL_MAP_DISCOGS
 LABEL_MAP_DISCOGS_EXT = constants.LABEL_MAP_DISCOGS_EXT
@@ -24,11 +29,6 @@ CLASS_TRIVIAL = constants.CLASS_TRIVIAL
 CLASS_DISCOGS = constants.CLASS_DISCOGS
 CLASS_WIKIPEDIA = constants.CLASS_WIKIPEDIA
 CLASS_INTERIM = constants.CLASS_INTERIM
-
-###################
-# This script is a handy tool to decouple the dependence of the single classification steps (e.g. running the discogs
-# crawler before the wikipedia crawler) by fast forwarding all made classifications to the successive steps.
-###################
 
 '''
 Maps all entries from df1 to df2 where target1 is in the FINALS

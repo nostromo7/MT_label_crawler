@@ -115,9 +115,7 @@ def run_crawler(input_map=INPUT_LABEL_MAP, index_from=-1):
     else:
         LABEL_MAP = pd.read_csv(input_map, dtype={DISCOGS_WIKI_URL: str})
 
-
     for index, entry in tqdm(LABEL_MAP.iterrows(), total=LABEL_MAP.shape[0]):
-    # for index, entry in LABEL_MAP.iterrows():
         if STOP_AT is not None and entry[RECORD_LABEL_LOW] != STOP_AT:
             continue
 
@@ -142,6 +140,7 @@ def run_crawler(input_map=INPUT_LABEL_MAP, index_from=-1):
 
     save_label_map()
     save_archives()
+
 
 def get_major_label_classification(label_name) -> DiscogsEntry:
     global ARCHIVE_LOOKUP
@@ -183,7 +182,6 @@ def get_discogs_label_id(label_name):
         except (requests.exceptions.ConnectionError, json.decoder.JSONDecodeError) as e:
             # happened first on 'South By Sea Music'
             if DEBUG: print('Connection Error: ', e)
-            # TODO: change this and set a different flag for possible retry later; check: is a retry even successful or are the same labels retried every time?
             ARCHIVE_ID_MAP[label_name] = DISCOGS_NO_ID_FLAG
             return None
 
@@ -247,11 +245,6 @@ def extract_discogs_page(label_id, depth=0) -> DiscogsEntry:
         if DEBUG: print('Connection Error:', e)
 
     finally:
-        # TODO: Strict independent classification is enabled
-        # check for independent keyword when parent lookups were unsuccessful
-        # if discogs_entry.shortcut in DISCOGS_FLAGS and indi_keyword_in_text(label_full.profile):
-        #     discogs_entry.shortcut = FINAL_INDI
-
         discogs_entry.keywords = count_keywords(discogs_entry.description)
 
         return discogs_entry
@@ -339,8 +332,8 @@ def save_label_map():
     LABEL_MAP.drop([DISCOGS_WIKI_URL, DISCOGS_KEYWORD_UNIV_SUM, DISCOGS_KEYWORD_SONY_SUM, DISCOGS_KEYWORD_WARN_SUM, DISCOGS_KEYWORD_INDI_SUM], axis=1).to_csv(OUTPUT_LABEL_MAP, index=False)
 
 
-def main(debug=None):
-    global INPUT_LABEL_MAP, OUTPUT_LABEL_MAP, ARCHIVE_LOOKUP_PATH, ARCHIVE_DISCOGS_ID_MAP_PATH, DEBUG
+def main(debug=None, max_depth=6):
+    global INPUT_LABEL_MAP, OUTPUT_LABEL_MAP, ARCHIVE_LOOKUP_PATH, ARCHIVE_DISCOGS_ID_MAP_PATH, DEBUG, MAX_DEPTH
 
     print()
     print('##########################################################')
@@ -349,6 +342,7 @@ def main(debug=None):
 
     if debug is not None:
         DEBUG = debug
+    MAX_DEPTH = max_depth
 
     load_archives()
     if os.path.exists(OUTPUT_LABEL_MAP_EXT):

@@ -2,7 +2,6 @@ import spotipy
 import sys
 import os
 import pandas as pd
-import numpy as np
 from spotipy.oauth2 import SpotifyClientCredentials
 from tqdm import tqdm
 
@@ -13,7 +12,7 @@ from src import constants
 DEBUG = constants.DEBUG
 
 LAST_SAVE_INDEX = constants.LAST_SAVE_INDEX
-SAVING_STEP = 100 # constants.SAVING_STEP
+SAVING_STEP = constants.SAVING_STEP
 TRACK_REQUEST_BULK_SIZE = constants.ALBUM_REQUEST_BULK_SIZE
 BULK_FAILED_FLAG = constants.BULK_FAILED_FLAG
 FAILED_LOOKUP_FLAG = constants.FAILED_LOOKUP_FLAG

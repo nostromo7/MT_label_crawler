@@ -90,6 +90,7 @@ MAX_DEPTH = 6
 SAVE_AFTER = 100
 MAX_LOOKUP_TIME_S = 600
 
+# Set language to english as there are more infoboxes on label pages in the english wiki version
 wikipedia.set_lang('en')
 LABEL_MAP = pd.DataFrame()
 
@@ -369,9 +370,6 @@ def extract_wikipedia_page(wiki_url, depth=0) -> WikipediaEntry:
                 if INDI_WIKI_URL == link.get('href'):
                     if DEBUG: print('Contains link to wiki/indi page')
                     wiki_entry.contains_indi = True
-                    # TODO: strict indi classification enabled
-                    # classification = FINAL_INDI
-
 
             if DEBUG:
                 print('No classification possible')
@@ -523,14 +521,11 @@ def save_archives():
 def save_label_map():
     if DEBUG: print('save label map')
     LABEL_MAP.to_csv(OUTPUT_LABEL_MAP_EXT, index=False)
-
-    # TODO: add discogs columns later
-    # LABEL_MAP.drop([DISCOGS_WIKI_URL, DISCOGS_KEYWORDS_SUM, WIKI_URL, WIKI_KEYWORDS_SUM, WIKI_HAS_INDI_LINK], axis=1).to_csv(OUTPUT_LABEL_MAP, index=False)
     LABEL_MAP[[RECORD_LABEL_LOW, 'occurrences', CLASS_TRIVIAL, CLASS_DISCOGS, CLASS_WIKIPEDIA]].to_csv(OUTPUT_LABEL_MAP, index=False)
 
 
-def main(debug=None, restart=False):
-    global DEBUG
+def main(debug=None, max_depth=6, restart=False):
+    global DEBUG, MAX_DEPTH
 
     print()
     print('##########################################################')
@@ -539,6 +534,7 @@ def main(debug=None, restart=False):
 
     if debug is not None:
         DEBUG = debug
+    MAX_DEPTH = max_depth
 
     if restart:
         print('PURGING ALL WIKI FILES')

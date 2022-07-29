@@ -23,7 +23,10 @@ PATH_TO_SLICES_ENRICHED = os.path.join(dirname, '../data/slices_enriched/')
 # path to lfm-2b file
 PATH_TO_LFM_ORIGINAL = os.path.join(dirname, '../data/lfm-2b_original/spotify-uris.tsv')
 PATH_TO_LFM_ENRICHED = os.path.join(dirname, '../data/lfm-2b_original/spotify-uris_enriched.tsv')
+PATH_TO_LFM_LISTENING_EVENTS = os.path.join(dirname, '../data/lfm-2b_original/listening-events.tsv')
 
+# Folder for crawler output:
+CRAWLER_OUTPUT_FOLDER = os.path.join(dirname, '../data/generated/')
 
 # ######################################
 # ##### Spotify crawler constants ######

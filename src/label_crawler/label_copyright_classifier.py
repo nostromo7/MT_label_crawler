@@ -245,6 +245,7 @@ def main(debug=None):
 
     copyright_analysis()
 
+
 if __name__ == "__main__":
     try:
         main()

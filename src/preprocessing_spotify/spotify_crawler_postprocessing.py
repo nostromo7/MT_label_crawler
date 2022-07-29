@@ -1,4 +1,4 @@
-import getopt, sys
+import sys
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -59,17 +59,23 @@ def fill_with_existing_label_classification(label_map, existing_label_map_path):
     mapping_dict = dict(zip(label_map_existing[RECORD_LABEL_LOW], label_map_existing[RECORD_LABEL_MAJOR]))
     existing_low_level_record_labels = mapping_dict.keys()
 
+    label_count_all = 0
+    label_count_failed_flag = 0
+    label_count_assignment = 0
     occ_sum = 0
     occ_flag = 0
     occ_known = 0
     occ_known_not_indi = 0
     for index, entry in tqdm(label_map.iterrows(), total=label_map.shape[0]):
+        label_count_all += 1
         occ_sum += entry['occurrences']
         if entry[RECORD_LABEL_LOW] == FAILED_LOOKUP_FLAG:
+            label_count_failed_flag += 1
             occ_flag += entry['occurrences']
             label_map.loc[index, CLASS_TRIVIAL] = constants.FINAL_UNKN
 
         elif entry[RECORD_LABEL_LOW] in existing_low_level_record_labels:
+            label_count_assignment += 1
             occ_known += entry['occurrences']
             label_map.loc[index, CLASS_TRIVIAL] = mapping_dict[entry[RECORD_LABEL_LOW]]
             if mapping_dict[entry[RECORD_LABEL_LOW]] != constants.FINAL_INDI:
@@ -79,6 +85,9 @@ def fill_with_existing_label_classification(label_map, existing_label_map_path):
     if DEBUG: print('occ_flag:', occ_flag, occ_flag/occ_sum)
     if DEBUG: print('occ_known:', occ_known, occ_known/occ_sum)
     if DEBUG: print('occ_known_not_indi:', occ_known_not_indi, occ_known_not_indi/occ_sum)
+    if DEBUG: print('label_count_all:', label_count_all)
+    if DEBUG: print('label_count_failed_flag:', label_count_failed_flag)
+    if DEBUG: print('label_count_assignment:', label_count_assignment)
 
     return label_map
 

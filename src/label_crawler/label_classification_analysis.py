@@ -1,4 +1,3 @@
-import math
 import operator
 import sys
 import pandas as pd
@@ -161,9 +160,6 @@ def compare_label_maps(label_map_path_1, target_class_1, label_map_path_2, targe
 
     n_tracks = label_map_1['occurrences'].sum()
     print(f'Total number of tracks: \t{n_tracks:,}')
-    #
-    # print(pd.unique(label_map_1[target_class_1]))
-    # print(pd.unique(label_map_2[target_class_2]))
 
     [final_dict_1, flags_dict_1] = create_dicts(label_map_1, target_class_1)
     [final_dict_2, flags_dict_2] = create_dicts(label_map_2, target_class_2)
@@ -216,7 +212,6 @@ def create_label_map_comparison(label_map_1_path, target_1, label_map_2_path, ta
             changes_map_n[major1][major2] += 1
             changes_map_occ[major1][major1] += occ1
             changes_map_occ[major1][major2] += occ2
-            # print('diff found')
             n_diff += 1
             sum_diff += lm_1.loc[index, 'occurrences']
 
@@ -260,16 +255,19 @@ def create_dicts(df, target_class):
 def create_tree_map(label_map_path, target, threshold=1000):
     df = pd.read_csv(label_map_path)
     df = df.loc[(df['occurrences'] >= threshold) & (df[target].isin(FINALS))]
-    print(df.head(5)[[RECORD_LABEL_LOW, target, 'occurrences']])
 
-    x = np.average(df['occurrences'], weights=df['occurrences'])
-    print(x)
-
+    colors = px.colors.qualitative.Plotly
     fig = px.treemap(df,
-                     path=[px.Constant(format_dataset_tag() + " labels > 1000occ"), target, RECORD_LABEL_LOW],
+                     path=[px.Constant(format_dataset_tag() + f" labels > {threshold}occ"), target, RECORD_LABEL_LOW],
                      values='occurrences',
-                     #color='occurrences',
-                     #color_continuous_midpoint=np.average([0, np.max(df['occurrences'])])
+                     color=target,
+                     color_discrete_map={
+                         '(?)': 'white',
+                         FINAL_UNIV: colors[0],
+                         FINAL_SONY: colors[1],
+                         FINAL_WARN: colors[2],
+                         FINAL_INDI: colors[3]
+                     }
                      )
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
     fig.show()
@@ -280,7 +278,19 @@ def plot_stepwise_gain(df_chart):
     df_chart = df_chart.set_index('step')
     df_chart['Unclassified'] = 1 - df_chart[list(df_chart.columns)].sum(axis=1)
     df_chart = df_chart*100
-    fig = px.bar(df_chart, labels={'value': f'Percentage of tracks in {dataset_name}', 'step': 'Classification step', 'variable': 'Major Classification'}, title=f'Record label distribution for each step for {dataset_name}')
+    fig = px.bar(
+        df_chart,
+        color_discrete_map={
+            FINAL_UNIV: px.colors.qualitative.Plotly[0],
+            FINAL_SONY: px.colors.qualitative.Plotly[1],
+            FINAL_WARN: px.colors.qualitative.Plotly[2],
+            FINAL_INDI: px.colors.qualitative.Plotly[3],
+            FINAL_UNKN: 'grey',
+            'Unclassified': 'white'
+        },
+        labels={'value': f'Percentage of tracks in {dataset_name}', 'step': 'Classification step', 'variable': 'Major Classification'},
+        title=f'Record label distribution for each step for {dataset_name}'
+    )
     fig.show()
 
 
@@ -369,7 +379,6 @@ def main(debug=None):
 
     #create_label_map_comparison(LABEL_MAP_COPYRIGHT_PREV, CLASS_COPYRIGHT, LABEL_MAP_COPYRIGHT, CLASS_COPYRIGHT)
     create_tree_map(LABEL_MAP_FINAL, RECORD_LABEL_MAJOR)
-
 
     # df_chart = calculate_stepwise_gain(constants.LABEL_MAP_WIKIPEDIA)
     # plot_stepwise_gain(df_chart)

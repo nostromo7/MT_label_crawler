@@ -22,7 +22,7 @@ TRACK_START = False
 
 
 def main(debug=None, track_start=None, run_analysis=None):
-    global DEBUG, RUN_ANALYSIS
+    global DEBUG, RUN_ANALYSIS, TRACK_START
 
     if debug is not None:
         DEBUG = debug
@@ -31,13 +31,13 @@ def main(debug=None, track_start=None, run_analysis=None):
     if run_analysis is not None:
         RUN_ANALYSIS = run_analysis
 
-    label_mapping_trivial.main(debug=debug)
-    discogs_label_crawler.main(debug=debug)
-    wikipedia_crawler.main(debug=debug)
-    label_mapping_interim.main(debug=debug, wiki_keyword_agg_under=2, wiki_keyword_agg_over=0.25)
-    label_copyright_classifier.main(debug=debug)
-    label_mapping_final.main(debug=debug, discogs_keyword_agg_over=0.2)
-    label_crawler_postprocessing.main(track_start=track_start)
+    label_mapping_trivial.main(debug=DEBUG)
+    discogs_label_crawler.main(debug=DEBUG, max_depth=6)
+    wikipedia_crawler.main(debug=DEBUG, max_depth=6)
+    label_mapping_interim.main(debug=DEBUG, wiki_keyword_agg_under=2, wiki_keyword_agg_over=0.25)
+    label_copyright_classifier.main(debug=DEBUG)
+    label_mapping_final.main(debug=DEBUG, discogs_keyword_agg_over=0.2)
+    label_crawler_postprocessing.main(track_start=TRACK_START)
 
     if RUN_ANALYSIS:
         label_classification_analysis.main()

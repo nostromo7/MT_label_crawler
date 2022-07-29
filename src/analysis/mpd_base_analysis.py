@@ -132,7 +132,6 @@ def process_playlist(playlist):
 
     total_playlists += 1
     n_tracks.append(playlist["num_tracks"])
-    # print playlist['playlist_id'], playlist['name']
 
     if "description" in playlist:
         total_descriptions += 1
@@ -177,7 +176,7 @@ def analyze_histogram(histogram, perc=0.9, plot_title=None, plot_focus=None):
     plt.title(plot_title)
     plt.xlabel('Unique ' + plot_focus)
     plt.axvline(x=index, color='red', linewidth=0.5, label=f'Top {(index / number_total):.2%} of all unique {plot_focus} cover {perc:.0%}\n of all occurrences ({index:,} of {number_total:,})')
-    plt.ylabel('Occurrences in MPD (log)')
+    plt.ylabel('Occurrences (log)')
     plt.yscale('log')
     plt.legend()
     plt.show()
